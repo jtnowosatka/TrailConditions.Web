@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './Components/App/App';
+import UnauthenticatedApp from './Components/UnauthenticatedApp/UnauthenticatedApp';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <UnauthenticatedApp />
   </React.StrictMode>,
   document.getElementById('root')
 );

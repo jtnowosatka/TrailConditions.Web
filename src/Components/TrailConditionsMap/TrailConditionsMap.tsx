@@ -1,8 +1,8 @@
 import React from 'react';
-import './AdminTrailMap.css';
+import './TrailConditionsMap.css';
 import * as L from 'leaflet';
 
-export default class AdminTrailMap extends React.Component {
+export default class TrailConditionsMap extends React.Component {
     private map: L.Map | null = null;
 
     private baseOverpassUrl : string = `https://overpass-api.de/api/interpreter?`;

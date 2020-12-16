@@ -1,11 +1,12 @@
 import React from 'react';
 import './App.css';
-import AdminTrailMap from '../AdminTrailMap/AdminTrailMap';
+import TrailConditionsMap from '../TrailConditionsMap/TrailConditionsMap';
 
 function App() {
+  alert("Authenticated!");
   return (
     <div className="App">
-      <AdminTrailMap />
+      <TrailConditionsMap />
     </div>
   );
 }
