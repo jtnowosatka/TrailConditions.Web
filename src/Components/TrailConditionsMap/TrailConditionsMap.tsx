@@ -4,9 +4,7 @@ import * as L from 'leaflet';
 
 export default class TrailConditionsMap extends React.Component {
     private map: L.Map | null = null;
-
-    private baseOverpassUrl : string = `https://overpass-api.de/api/interpreter?`;
-    private featureQuery: string = `data=[out:json];(way["highway"]({bbox});>;);out;`;
+    private geoJsonLayer: L.Layer | null = null;
     
     componentDidMount(){
         this.map = L.map('admin-trail-map', { tap: true, tapTolerance: 20 });
@@ -20,23 +18,41 @@ export default class TrailConditionsMap extends React.Component {
         
         this.map.addLayer(osm);
 
-        this.map.setView([47.497646, -121.967777], 13);
+        this.map.setView([47.497646, -121.967777], 14);
 
-        /*
-        var bbox = this.map.getBounds();
-        var bboxString = `${bbox.getSouth()},${bbox.getWest()},${bbox.getNorth()},${bbox.getEast()}`;
+        this.updateMap();
 
-        var url = "http://localhost:7071/api/GetOsmData?bbox=" + bboxString;// "47.486062984875%2C-122.00403213501%2C47.526764442563%2C-121.93948745728";
-
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                var geoJsonLayer = L.geoJSON(data.features);
-                this.map?.addLayer(geoJsonLayer);
-            });*/
+        this.map.on("moveend", () => this.updateMap());
+        this.map.on("zoom", () => this.updateMap())
     }
 
     public render() {
         return (<div id="admin-trail-map"></div>);
+    }
+
+    updateMap(){
+        if(this.map && this.map.getZoom() > 13){
+            var bbox = this.map.getBounds();
+            var bboxString = `${bbox.getSouth()},${bbox.getWest()},${bbox.getNorth()},${bbox.getEast()}`;
+
+            var serviceHostUrl = process.env.NODE_ENV === "production" ?
+                "https://trailconditions-api-devtest.azurewebsites.net" :
+                "http://localhost:7071";
+
+            var url = `${serviceHostUrl}/api/GetOsmData?bbox=${bboxString}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if(this.geoJsonLayer){
+                        this.map?.removeLayer(this.geoJsonLayer as L.Layer);
+                    }
+                    
+                    this.geoJsonLayer = L.geoJSON(data.features);
+                    this.map?.addLayer(this.geoJsonLayer);
+                });
+        }else{
+            this.map?.removeLayer(this.geoJsonLayer as L.Layer);
+        }
     }
 }
